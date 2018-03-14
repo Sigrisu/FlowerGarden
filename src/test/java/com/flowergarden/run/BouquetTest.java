@@ -1,33 +1,40 @@
 package com.flowergarden.run;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.flowergarden.bouquet.*;
 import com.flowergarden.flowers.GeneralFlower;
 import com.flowergarden.flowers.Rose;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+
+import static org.mockito.Mockito.when;
 
 public class BouquetTest {
+	@Mock
 	private Bouquet<GeneralFlower> bouquet;
 
-	@Before
-	public void initBouquet() {
-		bouquet = new MarriedBouquet();
-		bouquet.addFlower(new Rose());
-	}
+	@Rule
+	public MockitoRule mockitoRule = MockitoJUnit.rule();
 
 	@Test
 	public void getPriceTest() {
-		Float price = bouquet.getPrice();
-		Assert.assertEquals(Float.valueOf(120), price);
+		when(bouquet.getPrice()).thenReturn((float) 120); ;
+		Assert.assertEquals(Float.valueOf(120), bouquet.getPrice(),0);
 	}
-	
+
 	@Test
 	public void searchFlowersByLenghtTest() {
-		Collection<GeneralFlower> flowers = bouquet.searchFlowersByLenght(0, 0);
-		Assert.assertEquals(flowers.isEmpty(), false);
+		when( bouquet.searchFlowersByLenght(0, 0)).thenReturn(Collections.emptyList());
+		Assert.assertTrue(bouquet.searchFlowersByLenght(0, 0).isEmpty());
 	}
 }
