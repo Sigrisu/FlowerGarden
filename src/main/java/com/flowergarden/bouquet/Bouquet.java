@@ -7,4 +7,5 @@ public interface Bouquet<T> {
 	Collection<T> searchFlowersByLenght(int start, int end);
 	void sortByFreshness();
 	Collection<T> getFlowers();
+	void setAssembledPrice(float price);
 }

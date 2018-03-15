@@ -22,7 +22,8 @@ public class Chamomile extends GeneralFlower {
 	public int getPetals(){
 		return petals;
 	}
-	
 
-
+	public void setPetals(int petals) {
+		this.petals = petals;
+	}
 }

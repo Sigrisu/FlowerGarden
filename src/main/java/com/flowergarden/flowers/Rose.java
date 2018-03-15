@@ -22,7 +22,8 @@ public class Rose extends GeneralFlower {
 	public boolean getSpike(){
 		return spike;
 	}
-	
 
-
+	public void setSpike(boolean spike) {
+		this.spike = spike;
+	}
 }
