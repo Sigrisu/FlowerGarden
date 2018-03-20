@@ -1,4 +1,6 @@
-package com.flowergarden.bouquet;
+package com.flowergarden.dao;
+
+import com.flowergarden.bouquet.Bouquet;
 
 import java.util.List;
 

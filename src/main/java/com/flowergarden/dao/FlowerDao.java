@@ -1,11 +1,12 @@
-package com.flowergarden.flowers;
+package com.flowergarden.dao;
 
-import java.io.IOException;
+import com.flowergarden.flowers.Flower;
+
 import java.util.List;
 
 public interface FlowerDao {
 
-    List<Flower> getAll() throws IOException;
+    List<Flower> getAll() throws Exception;
 
     Flower getById(int id) throws Exception;
 

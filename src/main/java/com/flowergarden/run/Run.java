@@ -1,14 +1,10 @@
 package com.flowergarden.run;
 
 import com.flowergarden.bouquet.Bouquet;
-import com.flowergarden.bouquet.BouquetDao;
-import com.flowergarden.bouquet.BouquetDaoImpl;
-import com.flowergarden.flowers.*;
-import com.flowergarden.properties.FreshnessInteger;
+import com.flowergarden.dao.BouquetDao;
+import com.flowergarden.dao.BouquetDaoImpl;
 
-import java.io.File;
 import java.io.IOException;
-import java.sql.*;
 import java.util.Iterator;
 import java.util.List;
 

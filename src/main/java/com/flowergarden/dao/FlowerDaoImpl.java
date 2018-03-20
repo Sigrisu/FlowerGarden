@@ -1,26 +1,25 @@
-package com.flowergarden.flowers;
+package com.flowergarden.dao;
 
 
+import com.flowergarden.flowers.Chamomile;
+import com.flowergarden.flowers.Flower;
+import com.flowergarden.flowers.Rose;
+import com.flowergarden.flowers.Tulip;
 import com.flowergarden.properties.FreshnessInteger;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FlowerDaoImpl implements FlowerDao {
     @Override
-    public List<Flower> getAll() throws IOException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+    public List<Flower> getAll() throws Exception {
         List<Flower> list = new ArrayList<Flower>();
-
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement("select * from flower");
-            ResultSet rs = stmt.executeQuery();
-
+        try (Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement("select * from flower");
+            ResultSet rs = stmt.executeQuery())
+        {
             while (rs.next()) {
                 if (rs.getString("name").equals("chamomile")) {
                     Flower flower = new Chamomile(rs.getInt("petals"), rs.getInt("lenght"),
@@ -39,28 +38,18 @@ public class FlowerDaoImpl implements FlowerDao {
                 }
             }
         } catch (SQLException e) {
-            // e.printStackTrace();
-            throw new RuntimeException(e);
-
-        } finally {
-            close(stmt);
-            close(conn);
+            throw new CustomException(e.getMessage(), e);
         }
-
         return list;
     }
 
     @Override
     public Flower getById(int id) throws Exception {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement("SELECT * FROM flower WHERE id=?");
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM flower WHERE id=?");
+             ResultSet rs = stmt.executeQuery())
+        {
             stmt.setInt(1, id);
-
-            ResultSet rs = stmt.executeQuery();
             Flower flower = null;
             if (rs.next()) {
                 if (rs.getString("name").equals("chamomile")) {
@@ -74,30 +63,22 @@ public class FlowerDaoImpl implements FlowerDao {
                     flower.setPrice(rs.getFloat("price"));
                     flower.setLenght(rs.getInt("lenght"));
                     flower.setFreshness(new FreshnessInteger(rs.getInt("freshness")));
-
                 }
                 return flower;
             } else {
                 return null;
             }
         } catch (SQLException e) {
-            // e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            close(stmt);
-            close(conn);
+            throw new CustomException(e.getMessage(), e);
         }
     }
 
     @Override
     public int add(Flower flower) throws Exception {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement("INSERT INTO flower(name, lenght, freshness, price, petals, spike) VALUES(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO flower(name, lenght, freshness, price, petals, spike) " +
+                    "VALUES(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS))
+        {
             if (flower instanceof Chamomile) {
                 stmt.setString(1, "chamomile");
                 stmt.setInt(2, flower.getLenght());
@@ -118,31 +99,19 @@ public class FlowerDaoImpl implements FlowerDao {
                 stmt.setInt(3, (int)flower.getFreshness().getFreshness());
                 stmt.setFloat(4, flower.getPrice());
             }
-
-            int result = stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
-
-            return result;
+            return stmt.executeUpdate();
         } catch (SQLException e) {
-            // e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            close(stmt);
-            close(conn);
+            throw new CustomException(e.getMessage(), e);
         }
 
     }
 
     @Override
     public int update(int id, Flower flower) throws Exception {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement(
-                    "UPDATE flower SET name=?, lenght=?, freshness=?, price=?, petals=?, spike=? WHERE  id=?");
-
+        try (Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+                    "UPDATE flower SET name=?, lenght=?, freshness=?, price=?, petals=?, spike=? WHERE  id=?"))
+        {
             if (flower instanceof Chamomile) {
                 stmt.setString(1, "chamomile");
                 stmt.setInt(2, flower.getLenght());
@@ -164,68 +133,26 @@ public class FlowerDaoImpl implements FlowerDao {
                 stmt.setFloat(4, flower.getPrice());
             }
             stmt.setInt(7, id);
-
             return stmt.executeUpdate();
         } catch (SQLException e) {
-             //e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            close(stmt);
-            close(conn);
+            throw new CustomException(e.getMessage(), e);
         }
     }
 
     @Override
     public int delete(int id) throws Exception {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = getConnection();
-            stmt = conn.prepareStatement("DELETE FROM flower WHERE id=?");
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement("DELETE FROM flower WHERE id=?"))
+        {
             stmt.setInt(1, id);
-
             return stmt.executeUpdate();
         } catch (SQLException e) {
-            // e.printStackTrace();
-            throw new RuntimeException(e);
-        } finally {
-            close(stmt);
-            close(conn);
+            throw new CustomException(e.getMessage(), e);
         }
     }
-    private Connection getConnection() throws IOException {
+    private Connection getConnection() throws Exception {
         File file = new File("flowergarden.db");
         String url = "jdbc:sqlite:"+file.getCanonicalFile().toURI();
-        try {
-            return DriverManager.getConnection(url);
-        } catch (Exception e) {
-            // e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    private static void close(Connection con) {
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                // e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-
-    private static void close(Statement stmt) {
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                // e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }
+        return DriverManager.getConnection(url);
     }
 }
