@@ -7,16 +7,23 @@ import com.flowergarden.flowers.Rose;
 import com.flowergarden.flowers.Tulip;
 import com.flowergarden.properties.FreshnessInteger;
 
+import javax.sql.DataSource;
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FlowerDaoImpl implements FlowerDao {
+    private DataSource dataSource;
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     @Override
     public List<Flower> getAll() throws Exception {
         List<Flower> list = new ArrayList<Flower>();
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement("select * from flower");
             ResultSet rs = stmt.executeQuery())
         {
@@ -45,7 +52,7 @@ public class FlowerDaoImpl implements FlowerDao {
 
     @Override
     public Flower getById(int id) throws Exception {
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM flower WHERE id=?");
              ResultSet rs = stmt.executeQuery())
         {
@@ -75,7 +82,7 @@ public class FlowerDaoImpl implements FlowerDao {
 
     @Override
     public int add(Flower flower) throws Exception {
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("INSERT INTO flower(name, lenght, freshness, price, petals, spike) " +
                     "VALUES(?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS))
         {
@@ -108,7 +115,7 @@ public class FlowerDaoImpl implements FlowerDao {
 
     @Override
     public int update(int id, Flower flower) throws Exception {
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(
                     "UPDATE flower SET name=?, lenght=?, freshness=?, price=?, petals=?, spike=? WHERE  id=?"))
         {
@@ -141,7 +148,7 @@ public class FlowerDaoImpl implements FlowerDao {
 
     @Override
     public int delete(int id) throws Exception {
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("DELETE FROM flower WHERE id=?"))
         {
             stmt.setInt(1, id);
@@ -150,9 +157,5 @@ public class FlowerDaoImpl implements FlowerDao {
             throw new CustomException(e.getMessage(), e);
         }
     }
-    private Connection getConnection() throws Exception {
-        File file = new File("flowergarden.db");
-        String url = "jdbc:sqlite:"+file.getCanonicalFile().toURI();
-        return DriverManager.getConnection(url);
-    }
+
 }

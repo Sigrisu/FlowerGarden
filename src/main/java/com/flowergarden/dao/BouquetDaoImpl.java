@@ -3,16 +3,23 @@ package com.flowergarden.dao;
 import com.flowergarden.bouquet.Bouquet;
 import com.flowergarden.bouquet.MarriedBouquet;
 
-import java.io.File;
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class BouquetDaoImpl implements BouquetDao{
+    private DataSource dataSource;
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     @Override
     public List<Bouquet> getAll() throws Exception {
         List<Bouquet> list = new ArrayList<Bouquet>();
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement("select * from bouquet");
             ResultSet rs = stmt.executeQuery())
         {
@@ -32,7 +39,7 @@ public class BouquetDaoImpl implements BouquetDao{
     @Override
     public Bouquet getById(int id) throws Exception {
         Bouquet bouquet = null;
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM bouquet WHERE id=?");
              ResultSet rs = stmt.executeQuery())
         {
@@ -51,7 +58,7 @@ public class BouquetDaoImpl implements BouquetDao{
 
     @Override
     public int add(Bouquet bouquet) throws Exception {
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement("INSERT INTO bouquet(name, assemble_price) VALUES(?, ?)",
                     Statement.RETURN_GENERATED_KEYS))
         {
@@ -65,7 +72,7 @@ public class BouquetDaoImpl implements BouquetDao{
 
     @Override
     public int update(int id, Bouquet bouquet) throws Exception {
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement("UPDATE bouquet SET assemble_price=? WHERE id=?"))
         {
             stmt.setDouble(1, bouquet.getPrice());
@@ -78,7 +85,7 @@ public class BouquetDaoImpl implements BouquetDao{
 
     @Override
     public int delete(int id) throws Exception {
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("DELETE FROM bouquet WHERE id=?"))
         {
             stmt.setInt(1, id);
@@ -86,12 +93,6 @@ public class BouquetDaoImpl implements BouquetDao{
         } catch (SQLException e) {
             throw new CustomException(e.getMessage(), e);
         }
-    }
-
-    private Connection getConnection() throws Exception  {
-        File file = new File("flowergarden.db");
-        String url = "jdbc:sqlite:"+file.getCanonicalFile().toURI();
-        return DriverManager.getConnection(url);
     }
 
 }
