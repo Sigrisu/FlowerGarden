@@ -21,7 +21,6 @@ public class Run {
             while (bouquetsIterator.hasNext()) {
                 System.out.println("Bouquet price: " + bouquetsIterator.next().getPrice());
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

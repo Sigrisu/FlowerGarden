@@ -3,12 +3,7 @@ package com.flowergarden.dao;
 import com.flowergarden.bouquet.Bouquet;
 import com.flowergarden.bouquet.MarriedBouquet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -48,11 +43,12 @@ public class BouquetDaoImpl implements BouquetDao{
     @Override
     public Bouquet getById(int id) throws Exception {
         Bouquet bouquet = null;
+        ResultSet rs = null;
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM bouquet WHERE id=?");
-             ResultSet rs = stmt.executeQuery())
+            PreparedStatement stmt = conn.prepareStatement("select * from bouquet where id=?"))
         {
             stmt.setInt(1, id);
+            rs= stmt.executeQuery();
             if (rs.next()) {
                 bouquet = new MarriedBouquet();
                 bouquet.setAssembledPrice(rs.getFloat("assemble_price"));
@@ -62,6 +58,10 @@ public class BouquetDaoImpl implements BouquetDao{
             }
         } catch (SQLException e) {
             throw new CustomException(e.getMessage(), e);
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {
+                throw new CustomException(e.getMessage(), e);
+            };
         }
     }
 

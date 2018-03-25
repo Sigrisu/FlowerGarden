@@ -7,14 +7,8 @@ import com.flowergarden.flowers.Rose;
 import com.flowergarden.flowers.Tulip;
 import com.flowergarden.properties.FreshnessInteger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
-
 import javax.sql.DataSource;
-import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +55,12 @@ public class FlowerDaoImpl implements FlowerDao {
 
     @Override
     public Flower getById(int id) throws Exception {
+        ResultSet rs = null;
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM flower WHERE id=?");
-             ResultSet rs = stmt.executeQuery())
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM flower WHERE id=?"))
         {
             stmt.setInt(1, id);
+            rs = stmt.executeQuery();
             Flower flower = null;
             if (rs.next()) {
                 if (rs.getString("name").equals("chamomile")) {
@@ -86,6 +81,10 @@ public class FlowerDaoImpl implements FlowerDao {
             }
         } catch (SQLException e) {
             throw new CustomException(e.getMessage(), e);
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {
+                throw new CustomException(e.getMessage(), e);
+            };
         }
     }
 
