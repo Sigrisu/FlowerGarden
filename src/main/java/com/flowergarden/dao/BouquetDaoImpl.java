@@ -2,14 +2,23 @@ package com.flowergarden.dao;
 
 import com.flowergarden.bouquet.Bouquet;
 import com.flowergarden.bouquet.MarriedBouquet;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Repository("bouquetDao")
 public class BouquetDaoImpl implements BouquetDao{
+
+    @Autowired
     private DataSource dataSource;
 
     public void setDataSource(DataSource dataSource) {

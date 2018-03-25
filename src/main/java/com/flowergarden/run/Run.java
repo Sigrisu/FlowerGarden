@@ -2,6 +2,7 @@ package com.flowergarden.run;
 
 import com.flowergarden.bouquet.Bouquet;
 import com.flowergarden.dao.BouquetDao;
+import com.flowergarden.dao.BouquetDaoImpl;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -13,7 +14,7 @@ public class Run {
     public static void main(String[] args) {
         ApplicationContext context =
                 new ClassPathXmlApplicationContext("application-context.xml");
-        BouquetDao bouquetDao = context.getBean("bouquetDAO", BouquetDao.class);
+        BouquetDao bouquetDao = context.getBean("bouquetDao", BouquetDao.class);
         try {
             List<Bouquet> bouquets = bouquetDao.getAll();
             Iterator<Bouquet> bouquetsIterator = bouquets.iterator();
