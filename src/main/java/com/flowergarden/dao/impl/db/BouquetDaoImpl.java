@@ -1,7 +1,10 @@
-package com.flowergarden.dao;
+package com.flowergarden.dao.impl.db;
 
 import com.flowergarden.bouquet.Bouquet;
 import com.flowergarden.bouquet.MarriedBouquet;
+import com.flowergarden.dao.BouquetDao;
+import com.flowergarden.dao.BouquetDaoIO;
+import com.flowergarden.dao.impl.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository("bouquetDao")
-public class BouquetDaoImpl implements BouquetDao{
+public class BouquetDaoImpl implements BouquetDao, BouquetDaoIO {
 
     @Autowired
     private DataSource dataSource;
@@ -38,6 +41,25 @@ public class BouquetDaoImpl implements BouquetDao{
             throw new CustomException(e.getMessage(), e);
         }
         return list;
+    }
+
+    @Override
+    public int addAll(List<Bouquet> bouquets) throws Exception {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("INSERT INTO bouquet(name, assemble_price) VALUES(?, ?)",
+                     Statement.RETURN_GENERATED_KEYS))
+        {
+            for (Bouquet bouquet: bouquets) {
+
+                stmt.setString(1, "married");
+                stmt.setDouble(2, bouquet.getPrice());
+                stmt.addBatch();
+            }
+            return stmt.executeBatch().length;
+
+        } catch (SQLException e) {
+            throw new CustomException(e.getMessage(), e);
+        }
     }
 
     @Override

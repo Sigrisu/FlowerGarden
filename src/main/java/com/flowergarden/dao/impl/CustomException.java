@@ -1,4 +1,4 @@
-package com.flowergarden.dao;
+package com.flowergarden.dao.impl;
 
 /**
  *

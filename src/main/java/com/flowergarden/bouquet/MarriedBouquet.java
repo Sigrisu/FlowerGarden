@@ -11,6 +11,12 @@ import com.flowergarden.flowers.Chamomile;
 import com.flowergarden.flowers.GeneralFlower;
 import com.flowergarden.flowers.Rose;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class MarriedBouquet implements Bouquet<GeneralFlower> {
 
 	private float assemblePrice = 120;
@@ -53,5 +59,21 @@ public class MarriedBouquet implements Bouquet<GeneralFlower> {
 
 	public void setAssembledPrice(float price) {
 		assemblePrice = price;
+	}
+
+	public float getAssemblePrice() {
+		return assemblePrice;
+	}
+
+	public void setAssemblePrice(float assemblePrice) {
+		this.assemblePrice = assemblePrice;
+	}
+
+	public List<GeneralFlower> getFlowerList() {
+		return flowerList;
+	}
+
+	public void setFlowerList(List<GeneralFlower> flowerList) {
+		this.flowerList = flowerList;
 	}
 }

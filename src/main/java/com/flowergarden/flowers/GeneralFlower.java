@@ -1,18 +1,21 @@
 package com.flowergarden.flowers;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.flowergarden.properties.Freshness;
 import com.flowergarden.properties.FreshnessInteger;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class GeneralFlower implements Flower<Integer>, Comparable<GeneralFlower> {
 	
 	FreshnessInteger freshness;
 	
-	@XmlElement
+
 	float price;
 	
-	@XmlElement
+
 	int lenght;
 	
 	public void setFreshness(FreshnessInteger fr){

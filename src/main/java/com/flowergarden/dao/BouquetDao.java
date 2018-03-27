@@ -12,6 +12,8 @@ public interface BouquetDao {
 
     int add(Bouquet bouquet) throws Exception;
 
+    int addAll(List<Bouquet> bouquets) throws Exception;
+
     int update(int id, Bouquet bouquet) throws Exception;
 
     int delete(int id) throws Exception;
