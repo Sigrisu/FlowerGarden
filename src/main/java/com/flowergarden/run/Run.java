@@ -13,7 +13,7 @@ public class Run {
     public static void main(String[] args) {
         ApplicationContext context =
                 new ClassPathXmlApplicationContext("application-context.xml");
-        //BouquetDao bouquetDao = context.getBean("bouquetDao", BouquetDao.class);
+        //Test DB BouquetDao bouquetDao = context.getBean("bouquetDao", BouquetDao.class);
         BouquetDaoIO bouquetDaoJson = context.getBean("bouquetDaoJson", BouquetDaoIO.class);
 
         try {
